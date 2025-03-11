@@ -6,6 +6,8 @@ type PriceChanging = {
   priceChange: number;
 };
 
+type PriceChangingMap = Map<number, PriceChanging>;
+
 @Injectable()
 export class MarketDataAnalyzerService {
   constructor(private readonly marketDataService: MarketDataService) {}
@@ -14,14 +16,17 @@ export class MarketDataAnalyzerService {
     symbol: string;
     timestampStart: number;
     timestampEnd: number;
-  }) {
+  }): Promise<{
+    increases: PriceChangingMap;
+    decreases: PriceChangingMap;
+  }> {
     const marketData =
       await this.marketDataService.fetchHistoricalMarketData(input);
 
     const increases = new Map<number, PriceChanging>();
     const decreases = new Map<number, PriceChanging>();
     marketData.forEach((singleMarketData, index) => {
-      const previousMarketData = marketData[index];
+      const previousMarketData = marketData[--index];
       if (!previousMarketData) {
         return;
       }
@@ -32,14 +37,19 @@ export class MarketDataAnalyzerService {
       if (previousPrice < currentPrice) {
         increases.set(singleMarketData.timestamp, {
           priceAtTheMoment: singleMarketData.price,
-          priceChange: previousPrice - currentPrice,
+          priceChange: currentPrice - previousPrice,
         });
       } else if (previousPrice > currentPrice) {
         decreases.set(singleMarketData.timestamp, {
           priceAtTheMoment: singleMarketData.price,
-          priceChange: previousPrice - currentPrice,
+          priceChange: currentPrice - previousPrice,
         });
       }
     });
+
+    return {
+      increases,
+      decreases,
+    };
   }
 }

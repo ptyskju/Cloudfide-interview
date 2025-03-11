@@ -22,15 +22,20 @@ export class MarketDataController {
     });
   }
   @Get('/analyze-data')
-  public analyzeMarketData(
+  public async analyzeMarketData(
     @Query('symbol') symbol: string,
     @Query('timestamp-start', TimestampValidator) timestampStart: number,
     @Query('timestamp-end', TimestampValidator) timestampEnd: number,
   ) {
-    return this.marketDataAnalyzer.analyzeMarketData({
+    const analyzedData = await this.marketDataAnalyzer.analyzeMarketData({
       symbol,
       timestampStart,
       timestampEnd,
     });
+
+    return {
+      increases: Object.fromEntries(analyzedData.increases),
+      decreases: Object.fromEntries(analyzedData.decreases),
+    };
   }
 }
