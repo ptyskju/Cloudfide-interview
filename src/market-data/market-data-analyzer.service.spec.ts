@@ -109,6 +109,58 @@ describe(MarketDataAnalyzerService.name, () => {
         ],
       },
     },
+    {
+      testName:
+        'return multiple increase result and single decrease result, when fetched data shows increase and decrease',
+      fetchedMarketData: [
+        {
+          timestamp: 1741695642,
+          price: '120',
+        },
+        {
+          timestamp: 1741690850900,
+          price: '130',
+        },
+        {
+          timestamp: 1741690890500,
+          price: '100',
+        },
+        {
+          timestamp: 1741690933700,
+          price: '120',
+        },
+        {
+          timestamp: 1741691452100,
+          price: '200',
+        },
+      ],
+      result: {
+        increases: [
+          {
+            timestamp: 1741690850900,
+            priceAtTheMoment: '130',
+            priceChange: 10,
+          },
+          {
+            timestamp: 1741690933700,
+            priceAtTheMoment: '120',
+            priceChange: 20,
+          },
+          {
+            timestamp: 1741691452100,
+            priceAtTheMoment: '200',
+            priceChange: 80,
+          },
+        ],
+        decreases: [
+          {
+            timestamp: 1741690890500,
+            priceAtTheMoment: '100',
+            priceChange: -30,
+          },
+        ],
+      },
+    },
   ];
 
   testCases.forEach((singleTestCase) => {
