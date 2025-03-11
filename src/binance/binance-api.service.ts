@@ -4,7 +4,6 @@ import {
   AggregatedTradeResponseDto,
   AggregatedTradesRequestDto,
 } from './dto/aggregated-trades.dto';
-import { plainToInstance } from 'class-transformer';
 
 @Injectable()
 export class BinanceApiService {
@@ -31,9 +30,17 @@ export class BinanceApiService {
       throw new InternalServerErrorException('Error getting aggregated trades');
     }
 
-    return response.data.map(
-      (singleData): AggregatedTradeResponseDto =>
-        plainToInstance(singleData, AggregatedTradeResponseDto),
-    );
+    return response.data.map((singleData): AggregatedTradeResponseDto => {
+      return {
+        tradeId: singleData.a,
+        price: singleData.p,
+        quantity: singleData.q,
+        firstTradeId: singleData.f,
+        lastTradeId: singleData.l,
+        timestamp: singleData.T,
+        isBuyerMarket: singleData.m,
+        isBestPriceMatch: singleData.M,
+      };
+    });
   }
 }

@@ -16,6 +16,6 @@ export class MarketDataService {
       startTime: input.timestampStart,
       endTime: input.timestampEnd,
     });
-    console.log(binanceMarketData);
+    console.log(JSON.stringify(binanceMarketData));
   }
 }
