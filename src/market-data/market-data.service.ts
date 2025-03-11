@@ -10,12 +10,10 @@ export class MarketDataService {
     timestampStart: number;
     timestampEnd: number;
   }) {
-    console.log(input);
-    const binanceMarketData = await this.binanceApiService.getAggregatedTrades({
+    return await this.binanceApiService.getAggregatedTrades({
       symbol: input.symbol,
       startTime: input.timestampStart,
       endTime: input.timestampEnd,
     });
-    console.log(JSON.stringify(binanceMarketData));
   }
 }
