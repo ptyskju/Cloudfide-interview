@@ -2,6 +2,7 @@ import { Controller, Get, Query } from '@nestjs/common';
 import { MarketDataService } from './market-data.service';
 import { TimestampValidator } from './validator/timestamp.validator';
 import { MarketDataAnalyzerService } from './market-data-analyzer.service';
+import { MarketDataAnalyzerResponseDto } from './dto/market-data-analyzer-response.dto';
 
 @Controller('market-data')
 export class MarketDataController {
@@ -26,16 +27,11 @@ export class MarketDataController {
     @Query('symbol') symbol: string,
     @Query('timestamp-start', TimestampValidator) timestampStart: number,
     @Query('timestamp-end', TimestampValidator) timestampEnd: number,
-  ) {
-    const analyzedData = await this.marketDataAnalyzer.analyzeMarketData({
+  ): Promise<MarketDataAnalyzerResponseDto> {
+    return this.marketDataAnalyzer.analyzeMarketData({
       symbol,
       timestampStart,
       timestampEnd,
     });
-
-    return {
-      increases: Object.fromEntries(analyzedData.increases),
-      decreases: Object.fromEntries(analyzedData.decreases),
-    };
   }
 }

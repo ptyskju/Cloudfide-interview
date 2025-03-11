@@ -1,5 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { MarketDataService } from './market-data.service';
+import {
+  MarketDataAnalyzerResponseDto,
+  SingleMarketDataAnalysis,
+} from './dto/market-data-analyzer-response.dto';
 
 type PriceChanging = {
   priceAtTheMoment: string;
@@ -16,10 +20,7 @@ export class MarketDataAnalyzerService {
     symbol: string;
     timestampStart: number;
     timestampEnd: number;
-  }): Promise<{
-    increases: PriceChangingMap;
-    decreases: PriceChangingMap;
-  }> {
+  }): Promise<MarketDataAnalyzerResponseDto> {
     const marketData =
       await this.marketDataService.fetchHistoricalMarketData(input);
 
@@ -48,8 +49,22 @@ export class MarketDataAnalyzerService {
     });
 
     return {
-      increases,
-      decreases,
+      increases: this.formatResponse(increases),
+      decreases: this.formatResponse(decreases),
     };
+  }
+
+  private formatResponse(
+    priceChangingMap: PriceChangingMap,
+  ): SingleMarketDataAnalysis[] {
+    const formattedData: SingleMarketDataAnalysis[] = [];
+    priceChangingMap.forEach((item, timestamp) =>
+      formattedData.push({
+        timestamp,
+        ...item,
+      }),
+    );
+
+    return formattedData;
   }
 }
